@@ -1,0 +1,37 @@
+# ——— Python ———
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+*.log
+
+# ——— Node / React ———
+node_modules/
+frontend-react/node_modules/
+.vite/
+npm-debug.log*
+yarn-error.log*
+
+# Le build est régénéré par `npm run build` : on ne le versionne pas
+frontend-react/dist/
+dist/
+
+# ——— Configuration locale (secrets, identifiants BDD) ———
+.env
+.env.local
+*.env.local
+
+# ——— Base de données / exports ———
+*.sqlite
+*.sqlite3
+dump*.sql
+
+# ——— Éditeurs / OS ———
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

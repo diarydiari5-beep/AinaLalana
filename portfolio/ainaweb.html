@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AinaLalana — Routage médical rural · Étude de cas</title>
+    <meta name="description" content="Étude de cas : plateforme de routage médical rural reliant villages isolés et centres de santé. React, Flask, MySQL, Dijkstra, KMP, Trie.">
+    <link rel="stylesheet" href="ainaweb.css">
+</head>
+<body>
+
+<!-- ============================================================
+     PAGE D'ÉTUDE DE CAS — À intégrer dans un portfolio.
+     Remplacer les liens « # » par l'URL de la démo et du dépôt.
+     Les images sont dans portfolio/assets/.
+     ============================================================ -->
+
+<header class="topbar">
+    <a class="back" href="#">← Retour au portfolio</a>
+    <span class="topbar-tag">Étude de cas</span>
+</header>
+
+<main>
+
+    <!-- ——— Hero ——— -->
+    <section class="hero">
+        <div class="wrap">
+            <p class="eyebrow">Projet full-stack · 2026</p>
+            <h1>AinaLalana</h1>
+            <p class="lede">
+                Une plateforme qui aide les habitants des zones rurales de Madagascar à rejoindre
+                le centre de santé le plus proche — en tenant compte de l'état réel des routes.
+            </p>
+
+            <ul class="meta">
+                <li><span>Rôle</span> Conception &amp; développement full-stack</li>
+                <li><span>Stack</span> React 18 · Flask · MySQL</li>
+                <li><span>Points clés</span> Dijkstra · KMP · Trie · i18n</li>
+            </ul>
+
+            <div class="cta">
+                <a class="btn btn-primary" href="#">Voir la démo en ligne</a>
+                <a class="btn btn-ghost" href="#">Code source (GitHub)</a>
+            </div>
+
+            <figure class="hero-shot">
+                <img src="assets/01-login.png" alt="Écran de connexion d'AinaLalana, avec les comptes de démonstration">
+                <figcaption>Connexion — les comptes de démonstration pré-remplissent le formulaire.</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <!-- ——— Contexte ——— -->
+    <section class="section">
+        <div class="wrap grid-2">
+            <div>
+                <h2>Le problème</h2>
+                <p>
+                    Dans les zones rurales malgaches, rejoindre un centre de santé suppose de choisir
+                    la bonne piste. Une route peut être inondée, coupée par un éboulement ou simplement
+                    dégradée — sans que personne ne le sache avant d'être sur place.
+                </p>
+                <p>
+                    Les informations existent, mais elles sont dispersées : le citoyen connaît sa piste,
+                    le gestionnaire du centre connaît ses lits disponibles, le district connaît les
+                    travaux. Aucun outil ne reliait ces trois réalités.
+                </p>
+            </div>
+            <div>
+                <h2>La réponse</h2>
+                <p>
+                    Une application unique, avec trois espaces adaptés à chaque rôle, et un calcul
+                    d'itinéraire qui pénalise les routes signalées comme difficiles ou les exclut
+                    quand elles sont coupées.
+                </p>
+                <p>
+                    L'état du réseau n'est pas une donnée figée : il évolue avec les signalements
+                    des citoyens et les mises à jour du district.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ——— Les trois rôles ——— -->
+    <section class="section section-alt">
+        <div class="wrap">
+            <h2>Trois rôles, un seul outil</h2>
+            <div class="cards-3">
+                <article class="card">
+                    <div class="card-icon">🧭</div>
+                    <h3>Citoyen</h3>
+                    <p>Recherche son village avec autocomplétion, compare les CSB par distance et
+                        accessibilité, obtient un itinéraire étape par étape et signale l'état d'une route.</p>
+                </article>
+                <article class="card">
+                    <div class="card-icon">🏥</div>
+                    <h3>Gestionnaire CSB</h3>
+                    <p>Tient à jour les lits disponibles et la présence d'un médecin. Ces données
+                        alimentent directement les recommandations faites aux citoyens.</p>
+                </article>
+                <article class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Chef de district</h3>
+                    <p>Supervise le réseau : tableau de bord, gestion des villages, CSB et routes,
+                        historique des signalements filtrable par période.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ——— Galerie ——— -->
+    <section class="section">
+        <div class="wrap">
+            <h2>L'application</h2>
+            <div class="gallery">
+                <figure>
+                    <img src="assets/03-citoyen-resultats.png" alt="Liste des CSB proposés pour un village">
+                    <figcaption>CSB classés par distance, avec lits disponibles et présence d'un médecin.</figcaption>
+                </figure>
+                <figure>
+                    <img src="assets/04-itineraire.png" alt="Itinéraire détaillé en trois étapes">
+                    <figcaption>Itinéraire en trois étapes, avec l'état de chaque tronçon.</figcaption>
+                </figure>
+                <figure>
+                    <img src="assets/06-admin-dashboard.png" alt="Tableau de bord du chef de district">
+                    <figcaption>Tableau de bord : état du réseau et signalements récents.</figcaption>
+                </figure>
+                <figure>
+                    <img src="assets/05-signalements.png" alt="Formulaire de signalement d'une route">
+                    <figcaption>Signalement citoyen de l'état d'une route.</figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <!-- ——— Architecture ——— -->
+    <section class="section section-alt">
+        <div class="wrap grid-2">
+            <div>
+                <h2>Architecture</h2>
+                <p>
+                    Le backend Flask sert à la fois le build React et l'API REST : un seul processus,
+                    donc un seul service à déployer et à surveiller.
+                </p>
+                <p>
+                    La couche métier est séparée des contrôleurs et des DAO. Les structures
+                    algorithmiques (graphe, tas binaire, Trie, KMP) sont isolées dans
+                    <code>backend/utils/</code> et testables indépendamment.
+                </p>
+            </div>
+            <div class="diagram" aria-label="Schéma d'architecture">
+                <div class="diagram-node">React 18 + Vite<span>SPA · i18n FR/MG</span></div>
+                <div class="diagram-arrow">build → dist/</div>
+                <div class="diagram-node accent">Flask<span>sert dist/ + API /api/*</span></div>
+                <div class="diagram-arrow">DAO</div>
+                <div class="diagram-node">MySQL<span>6 tables · base ainalalana</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ——— Technique ——— -->
+    <section class="section">
+        <div class="wrap">
+            <h2>Ce qui a demandé le plus de travail</h2>
+
+            <div class="tech-grid">
+                <article class="tech">
+                    <h3>Dijkstra avec tas binaire</h3>
+                    <p>
+                        Le calcul d'itinéraire devait rester instantané même avec un réseau dense.
+                        Le tas binaire a été implémenté à la main (insertion et extraction en
+                        O(log n)) plutôt qu'avec <code>heapq</code>, pour garder la maîtrise de la
+                        structure et pouvoir la mesurer.
+                    </p>
+                    <p class="measure">×5,9 plus rapide que la version naïve sur 100 nœuds</p>
+                </article>
+
+                <article class="tech">
+                    <h3>Recherche de villages : KMP et Trie</h3>
+                    <p>
+                        L'autocomplétion devait tolérer les fautes de frappe et les accents.
+                        J'ai implémenté un Trie et l'algorithme KMP, puis mesuré les deux.
+                    </p>
+                    <p class="measure">Plus lents sur petits volumes — et c'est assumé</p>
+                </article>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <caption>Comparaison baseline naïve / implémentation optimisée (extrait de WORLD.md)</caption>
+                    <thead>
+                        <tr><th>Algorithme</th><th>Naïf</th><th>Optimisé</th><th>Écart</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Tas binaire (1 000 opérations)</td><td>0,0769 s</td><td>0,0294 s</td><td class="good">×2,61</td></tr>
+                        <tr><td>Dijkstra (100 nœuds)</td><td>0,0159 s</td><td>0,0027 s</td><td class="good">×5,91</td></tr>
+                        <tr><td>Trie (autocomplétion)</td><td>0,0101 s</td><td>0,2222 s</td><td class="bad">plus lent</td></tr>
+                        <tr><td>KMP (recherche de motif)</td><td>0,0000 s</td><td>0,0028 s</td><td class="bad">plus lent</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                Les deux dernières lignes sont le résultat le plus instructif du projet : sur de
+                petits volumes, les fonctions natives de Python (écrites en C) sont imbattables.
+                L'optimisation ne devient rentable qu'au-delà d'un certain volume de données —
+                mesurer valait mieux que supposer.
+            </p>
+        </div>
+    </section>
+
+    <!-- ——— Ce que j'ai appris ——— -->
+    <section class="section section-alt">
+        <div class="wrap grid-2">
+            <div>
+                <h2>Ce que j'ai appris</h2>
+                <ul class="list">
+                    <li>Concevoir une API REST et la brancher sur une SPA sans framework de state global.</li>
+                    <li>Gérer une connexion MySQL qui se coupe (reconnexion, verrous, curseurs par thread).</li>
+                    <li>Mesurer une optimisation avant de l'affirmer — et savoir renoncer à une idée fausse.</li>
+                    <li>Penser une interface pour trois publics très différents, en deux langues.</li>
+                </ul>
+            </div>
+            <div>
+                <h2>Limites assumées</h2>
+                <ul class="list">
+                    <li>Mots de passe stockés en clair : à hacher avant tout usage réel.</li>
+                    <li>Sessions en mémoire : un redémarrage déconnecte les utilisateurs.</li>
+                    <li>Jeu de données de démonstration réduit (8 villages, 4 CSB).</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ——— CTA final ——— -->
+    <section class="section final">
+        <div class="wrap">
+            <h2>Essayer l'application</h2>
+            <p>Trois comptes de démonstration sont disponibles sur la page de connexion.</p>
+            <div class="cta">
+                <a class="btn btn-primary" href="#">Voir la démo en ligne</a>
+                <a class="btn btn-ghost" href="#">Lire le code</a>
+            </div>
+            <p class="creds">
+                <code>admin@test.com</code> / <code>admin123</code> ·
+                <code>gest@test.com</code> / <code>gest123</code> ·
+                <code>citoyen@test.com</code> / <code>citoyen123</code>
+            </p>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="wrap">
+        <p>Étude de cas — AinaLalana · React, Flask, MySQL</p>
+        <a href="#">Retour au portfolio</a>
+    </div>
+</footer>
+
+</body>
+</html>

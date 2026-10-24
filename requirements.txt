@@ -1,0 +1,10 @@
+# Dépendances Python du backend AinaWeb
+# Installation : python -m pip install -r requirements.txt
+
+Flask==3.1.3
+flask-cors==6.0.5
+mysql-connector-python==26.10.0
+python-dotenv==1.0.1
+
+# Serveur WSGI de production (Linux/macOS uniquement — inutile sous Windows)
+gunicorn==23.0.0; sys_platform != "win32"
